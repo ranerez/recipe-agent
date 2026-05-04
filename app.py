@@ -68,13 +68,8 @@ async def stream_recipes(body: ChatRequest):
         async with client.messages.stream(
             model="claude-opus-4-7",
             max_tokens=4096,
-            system=[
-                {
-                    "type": "text",
-                    "text": SYSTEM_PROMPT,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
+            cache_control={"type": "ephemeral"},
+            system=SYSTEM_PROMPT,
             messages=[{"role": m.role, "content": m.content} for m in body.messages],
         ) as stream:
             async for text in stream.text_stream:

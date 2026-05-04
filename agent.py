@@ -231,13 +231,8 @@ def suggest_recipes(client: anthropic.Anthropic, ingredients: str) -> None:
     with client.messages.stream(
         model="claude-opus-4-7",
         max_tokens=4096,
-        system=[
-            {
-                "type": "text",
-                "text": SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},  # cache the large system prompt
-            }
-        ],
+        cache_control={"type": "ephemeral"},
+        system=SYSTEM_PROMPT,
         messages=[
             {
                 "role": "user",
