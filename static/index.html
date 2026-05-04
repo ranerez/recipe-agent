@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipe Agent</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fdf6ee;
+      color: #2c2c2c;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #c0392b;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 0.4rem;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 760px;
+    }
+
+    /* ── Inventory ───────────────────────────────────────────── */
+
+    .section-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-label .count {
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #aaa;
+    }
+
+    .add-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .add-row input {
+      flex: 1;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+
+    .add-row input:focus {
+      outline: none;
+      border-color: #c0392b;
+      background: #fff;
+    }
+
+    .add-row button {
+      margin: 0;
+      width: auto;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.95rem;
+      border-radius: 8px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      min-height: 2.4rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #fdf0ee;
+      border: 1px solid #f0c4be;
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.88rem;
+      color: #7b2c24;
+      transition: background 0.15s;
+    }
+
+    .chip:hover { background: #f9ddd9; }
+
+    .chip-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      color: #c0392b;
+      font-size: 1rem;
+      line-height: 1;
+      opacity: 0.6;
+      transition: opacity 0.15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .chip-remove:hover { opacity: 1; background: none; transform: none; }
+
+    .empty-hint {
+      color: #bbb;
+      font-size: 0.88rem;
+      font-style: italic;
+      padding: 0.3rem 0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f0ece7;
+      margin: 1.4rem 0;
+    }
+
+    /* ── Instructions input ──────────────────────────────────── */
+
+    .text-input {
+      width: 100%;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: #c0392b;
+      background: #fff;
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────── */
+
+    .primary-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: #c0392b;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .primary-btn:hover:not(:disabled) { background: #a93226; }
+    .primary-btn:active:not(:disabled) { transform: scale(0.98); }
+    .primary-btn:disabled { background: #e0a09a; cursor: not-allowed; }
+
+    .secondary-btn {
+      margin: 0;
+      width: auto;
+      padding: 0.6rem 1.3rem;
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .secondary-btn:hover:not(:disabled) { background: #a93226; }
+    .secondary-btn:active:not(:disabled) { transform: scale(0.98); }
+    .secondary-btn:disabled { background: #e0a09a; cursor: not-allowed; }
+
+    #status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #888;
+      min-height: 1.2em;
+      text-align: center;
+    }
+
+    /* ── Output ──────────────────────────────────────────────── */
+
+    #output-card {
+      display: none;
+      margin-top: 1.5rem;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 760px;
+    }
+
+    #output-card.visible { display: block; }
+
+    #output {
+      font-size: 0.97rem;
+      line-height: 1.7;
+    }
+
+    #output h1, #output h2, #output h3 {
+      margin: 1.2rem 0 0.5rem;
+      color: #1a1a1a;
+    }
+    #output h2 { font-size: 1.3rem; color: #c0392b; }
+    #output h3 { font-size: 1.1rem; }
+    #output p { margin: 0.5rem 0; }
+    #output ul, #output ol { padding-left: 1.4rem; margin: 0.4rem 0; }
+    #output li { margin: 0.2rem 0; }
+    #output strong { color: #1a1a1a; }
+    #output em { color: #555; }
+    #output hr { border: none; border-top: 1px solid #eee; margin: 1.2rem 0; }
+    #output table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+    #output th, #output td {
+      border: 1px solid #e5e5e5;
+      padding: 0.4rem 0.7rem;
+      text-align: left;
+    }
+    #output th { background: #fdf6ee; font-weight: 600; }
+
+    /* ── Feedback card ───────────────────────────────────────── */
+
+    #feedback-card {
+      display: none;
+      margin-top: 1rem;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 1.5rem 2rem;
+      width: 100%;
+      max-width: 760px;
+    }
+
+    #feedback-card.visible { display: block; }
+
+    #feedback-status {
+      margin-top: 0.6rem;
+      font-size: 0.88rem;
+      color: #888;
+      min-height: 1.2em;
+    }
+
+    /* ── Misc ────────────────────────────────────────────────── */
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: #c0392b;
+      margin-left: 1px;
+      vertical-align: text-bottom;
+      animation: blink 0.9s step-end infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-5px); }
+      40%       { transform: translateX(5px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+
+    @keyframes pulse-chip {
+      0%, 100% { background: #fdf0ee; border-color: #f0c4be; }
+      40%       { background: #f5b7b1; border-color: #c0392b; }
+    }
+
+    .add-row input.shake { animation: shake 0.35s ease; }
+    .chip.pulse           { animation: pulse-chip 0.5s ease; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍳 Recipe Agent</h1>
+  <p>Tell me what's in your fridge and I'll suggest dinner ideas.</p>
+</header>
+
+<div class="card">
+
+  <!-- Inventory -->
+  <div class="section-label">
+    My Pantry &amp; Fridge
+    <span class="count" id="inv-count"></span>
+  </div>
+
+  <div class="add-row">
+    <input
+      id="inv-input"
+      type="text"
+      placeholder="Add an ingredient…"
+      autocomplete="off"
+    />
+    <button class="secondary-btn" onclick="addIngredient()">Add</button>
+  </div>
+
+  <div class="chips" id="chips">
+    <span class="empty-hint">No ingredients yet — add some above.</span>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Instructions -->
+  <div class="section-label">
+    Any preferences?
+    <span class="count">optional</span>
+  </div>
+  <input
+    id="instructions"
+    class="text-input"
+    type="text"
+    placeholder="e.g. quick meals only, cooking for 4, no dairy, something spicy…"
+    autocomplete="off"
+  />
+
+  <button class="primary-btn" id="submit-btn" onclick="fetchRecipes()">Find Recipes</button>
+  <div id="status"></div>
+
+</div>
+
+<!-- Output -->
+<div id="output-card">
+  <div id="output"></div>
+</div>
+
+<!-- Feedback -->
+<div id="feedback-card">
+  <div class="section-label">Refine the results</div>
+  <div class="add-row">
+    <input
+      id="feedback-input"
+      type="text"
+      placeholder="e.g. make recipe 2 vegan, skip the one with fish, show something under 20 min…"
+      autocomplete="off"
+    />
+    <button class="secondary-btn" id="refine-btn" onclick="refineRecipes()">Refine</button>
+  </div>
+  <div id="feedback-status"></div>
+</div>
+
+<script>
+  /* ── Inventory (localStorage) ───────────────────────────── */
+
+  const STORAGE_KEY = "recipe-agent-inventory";
+
+  function loadInventory() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveInventory(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  function renderChips() {
+    const items = loadInventory().sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    const container = document.getElementById("chips");
+    const countEl   = document.getElementById("inv-count");
+
+    countEl.textContent = items.length ? `${items.length} item${items.length === 1 ? "" : "s"}` : "";
+
+    if (!items.length) {
+      container.innerHTML = '<span class="empty-hint">No ingredients yet — add some above.</span>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <span class="chip" data-name="${escapeHtml(item)}">
+        ${escapeHtml(item)}
+        <button class="chip-remove" onclick="removeIngredient(${JSON.stringify(item)})" title="Remove">&#x2715;</button>
+      </span>
+    `).join("");
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function addIngredient() {
+    const input    = document.getElementById("inv-input");
+    const raw      = input.value.trim();
+    if (!raw) return;
+
+    const newItems = raw.split(",").map(s => s.trim()).filter(Boolean);
+    const items    = loadInventory();
+    const duplicates = [];
+
+    for (const item of newItems) {
+      const normalized = item.toLowerCase();
+      const existing   = items.find(i => i.toLowerCase() === normalized);
+      if (!existing) {
+        items.push(item);
+      } else {
+        duplicates.push(existing);
+      }
+    }
+
+    items.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    saveInventory(items);
+    input.value = "";
+    renderChips();
+    input.focus();
+
+    if (duplicates.length) {
+      input.classList.remove("shake");
+      void input.offsetWidth;
+      input.classList.add("shake");
+      input.addEventListener("animationend", () => input.classList.remove("shake"), { once: true });
+
+      duplicates.forEach(name => {
+        const chip = document.querySelector(`#chips .chip[data-name="${CSS.escape(name)}"]`);
+        if (!chip) return;
+        chip.classList.remove("pulse");
+        void chip.offsetWidth;
+        chip.classList.add("pulse");
+        chip.addEventListener("animationend", () => chip.classList.remove("pulse"), { once: true });
+        chip.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    }
+  }
+
+  function removeIngredient(name) {
+    saveInventory(loadInventory().filter(i => i !== name));
+    renderChips();
+  }
+
+  document.getElementById("inv-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") addIngredient();
+  });
+
+  renderChips();
+
+  /* ── Conversation history & streaming ───────────────────── */
+
+  const marked_instance = marked.createInstance ? marked.createInstance() : marked;
+  if (marked_instance.setOptions) marked_instance.setOptions({ breaks: true });
+
+  // Holds the full multi-turn history for the current session.
+  // Each entry: { role: "user" | "assistant", content: string }
+  let history = [];
+
+  let rawMarkdown = "";
+  let cursorEl    = null;
+
+  function renderMarkdown() {
+    const outputEl = document.getElementById("output");
+    outputEl.innerHTML = (marked_instance.parse || marked_instance)(rawMarkdown);
+    if (cursorEl) outputEl.appendChild(cursorEl);
+  }
+
+  function buildUserMessage(ingredients, instructions) {
+    let content = `I have: ${ingredients}\n\nWhat dinners can I make tonight?`;
+    if (instructions.trim()) {
+      content = `I have: ${ingredients}\n\nAdditional preferences: ${instructions.trim()}\n\nWhat dinners can I make tonight?`;
+    }
+    return content;
+  }
+
+  async function streamFromHistory(messages, statusEl, refineMode = false) {
+    const outputCard    = document.getElementById("output-card");
+    const feedbackCard  = document.getElementById("feedback-card");
+    const outputEl      = document.getElementById("output");
+
+    rawMarkdown = "";
+    outputEl.innerHTML = "";
+    outputCard.classList.add("visible");
+    feedbackCard.classList.remove("visible");
+
+    cursorEl = document.createElement("span");
+    cursorEl.className = "cursor";
+    outputEl.appendChild(cursorEl);
+
+    outputCard.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    const response = await fetch("/api/recipes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ detail: response.statusText }));
+      throw new Error(err.detail || response.statusText);
+    }
+
+    const reader  = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer    = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const chunk = line.slice(6);
+        if (chunk === "[DONE]") {
+          statusEl.textContent = "";
+          cursorEl = null;
+          renderMarkdown();
+          // Save assistant reply to history
+          history.push({ role: "assistant", content: rawMarkdown });
+          feedbackCard.classList.add("visible");
+          document.getElementById("feedback-input").focus();
+          return;
+        }
+        rawMarkdown += chunk.replace(/\\n/g, "\n");
+        renderMarkdown();
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }
+    }
+  }
+
+  async function fetchRecipes() {
+    const items = loadInventory();
+    if (!items.length) {
+      document.getElementById("status").textContent = "Add some ingredients to your pantry first.";
+      return;
+    }
+
+    const instructions = document.getElementById("instructions").value;
+    const btn          = document.getElementById("submit-btn");
+    const statusEl     = document.getElementById("status");
+
+    // Reset session
+    history = [];
+
+    const userMessage = buildUserMessage(items.join(", "), instructions);
+    history.push({ role: "user", content: userMessage });
+
+    btn.disabled = true;
+    statusEl.textContent = "Finding recipes…";
+
+    try {
+      await streamFromHistory(history, statusEl);
+    } catch (err) {
+      statusEl.textContent = `Error: ${err.message}`;
+      cursorEl = null;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function refineRecipes() {
+    const input          = document.getElementById("feedback-input");
+    const feedback       = input.value.trim();
+    if (!feedback) return;
+
+    const refineBtn      = document.getElementById("refine-btn");
+    const feedbackStatus = document.getElementById("feedback-status");
+
+    // Append user's refinement message to history
+    history.push({ role: "user", content: feedback });
+    input.value = "";
+
+    refineBtn.disabled   = true;
+    feedbackStatus.textContent = "Refining…";
+
+    try {
+      await streamFromHistory(history, feedbackStatus, true);
+    } catch (err) {
+      feedbackStatus.textContent = `Error: ${err.message}`;
+      cursorEl = null;
+      // Remove the failed user message so history stays consistent
+      history.pop();
+    } finally {
+      refineBtn.disabled = false;
+    }
+  }
+
+  document.getElementById("instructions").addEventListener("keydown", e => {
+    if (e.key === "Enter") fetchRecipes();
+  });
+
+  document.getElementById("feedback-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") refineRecipes();
+  });
+</script>
+
+</body>
+</html>
