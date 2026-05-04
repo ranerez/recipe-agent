@@ -8,8 +8,8 @@ from typing import Literal
 
 import anthropic
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -19,6 +19,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 from agent import SYSTEM_PROMPT
 
 app = FastAPI(title="Recipe Agent")
+
+
+@app.middleware("http")
+async def redirect_ip_to_localhost(request: Request, call_next):
+    if request.url.hostname == "127.0.0.1":
+        url = request.url.replace(hostname="localhost")
+        return RedirectResponse(url=str(url))
+    return await call_next(request)
 
 static_dir = Path(__file__).parent / "static"
 if static_dir.exists():

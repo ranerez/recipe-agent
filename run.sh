@@ -12,6 +12,6 @@ if [ ! -f ".env" ]; then
   echo "Warning: .env not found. Copy .env.example and add your ANTHROPIC_API_KEY."
 fi
 
-URL="http://localhost:8000"
-printf "Starting Recipe Agent → \033]8;;%s\033\\%s\033]8;;\033\\\n" "$URL" "$URL"
+echo "Starting Recipe Agent"
+echo "→ http://localhost:8000"
 .venv/bin/uvicorn app:app --reload
