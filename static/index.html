@@ -297,6 +297,121 @@
       min-height: 1.2em;
     }
 
+    /* ── Save button ─────────────────────────────────────────── */
+
+    .recipe-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .save-btn {
+      flex-shrink: 0;
+      padding: 0.28rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid #c0392b;
+      border-radius: 6px;
+      background: transparent;
+      color: #c0392b;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      width: auto;
+      margin: 0;
+    }
+
+    .save-btn:hover { background: #fdf0ee; }
+    .save-btn.saved { background: #c0392b; color: #fff; }
+    .save-btn.saved:hover { background: #a93226; }
+
+    /* ── Saved recipes modal ─────────────────────────────────── */
+
+    #saved-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      overflow-y: auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #saved-modal.open { display: block; }
+
+    #saved-modal-box {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .modal-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .modal-hdr h2 { font-size: 1.3rem; color: #c0392b; }
+
+    .modal-close {
+      background: none; border: none; font-size: 1.4rem;
+      cursor: pointer; color: #888; padding: 0; width: auto; margin: 0; line-height: 1;
+    }
+    .modal-close:hover { color: #333; background: none; transform: none; }
+
+    .saved-empty {
+      color: #bbb; font-style: italic;
+      text-align: center; padding: 2rem 0;
+    }
+
+    .saved-item { border-top: 1px solid #f0ece7; padding: 1rem 0; }
+
+    .saved-item-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .saved-item-name {
+      font-weight: 700; font-size: 0.97rem; color: #1a1a1a;
+      cursor: pointer; flex: 1;
+    }
+    .saved-item-name:hover { color: #c0392b; }
+
+    .saved-item-meta { font-size: 0.78rem; color: #aaa; flex-shrink: 0; }
+
+    .delete-saved-btn {
+      background: none; border: 1px solid #ddd; border-radius: 6px;
+      font-size: 0.78rem; color: #888; cursor: pointer;
+      padding: 0.2rem 0.55rem; width: auto; margin: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .delete-saved-btn:hover { border-color: #c0392b; color: #c0392b; background: none; }
+
+    .saved-item-body {
+      display: none; margin-top: 0.9rem;
+      font-size: 0.93rem; line-height: 1.7;
+      border-top: 1px dashed #f0ece7; padding-top: 0.9rem;
+    }
+    .saved-item-body.open { display: block; }
+    .saved-item-body h2 { font-size: 1.2rem; color: #c0392b; margin: 1rem 0 0.4rem; }
+    .saved-item-body h3 { font-size: 1rem; margin: 0.8rem 0 0.3rem; }
+    .saved-item-body p { margin: 0.4rem 0; }
+    .saved-item-body ul, .saved-item-body ol { padding-left: 1.4rem; margin: 0.3rem 0; }
+    .saved-item-body li { margin: 0.15rem 0; }
+    .saved-item-body hr { border: none; border-top: 1px solid #eee; margin: 0.8rem 0; }
+
+    #saved-link {
+      display: inline-block; margin-top: 0.5rem;
+      font-size: 0.85rem; color: #c0392b;
+      text-decoration: none; opacity: 0.75;
+    }
+    #saved-link:hover { opacity: 1; text-decoration: underline; }
+
     /* ── Misc ────────────────────────────────────────────────── */
 
     .cursor {
@@ -333,6 +448,7 @@
 <header>
   <h1>🍳 Recipe Agent</h1>
   <p>Tell me what's in your fridge or pantry and I'll suggest dinner ideas. Add raw ingredients or leftovers.</p>
+  <a id="saved-link" href="#" onclick="openSavedModal(); return false;">Saved Recipes</a>
 </header>
 
 <div class="card">
@@ -398,7 +514,132 @@
   <div id="feedback-status"></div>
 </div>
 
+<!-- Saved recipes modal -->
+<div id="saved-modal">
+  <div id="saved-modal-box">
+    <div class="modal-hdr">
+      <h2>📌 Saved Recipes</h2>
+      <button class="modal-close" onclick="closeSavedModal()">✕</button>
+    </div>
+    <div id="saved-modal-body"></div>
+  </div>
+</div>
+
 <script>
+  /* ── Saved recipes (localStorage) ──────────────────────── */
+
+  const SAVED_KEY = "recipe-agent-saved";
+
+  function loadSavedRecipes() {
+    try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function persistSavedRecipes(list) {
+    localStorage.setItem(SAVED_KEY, JSON.stringify(list));
+  }
+
+  function toggleSaveRecipe(name, markdown, btn) {
+    const list = loadSavedRecipes();
+    const idx  = list.findIndex(r => r.name === name);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+      btn.textContent = "Save";
+      btn.classList.remove("saved");
+    } else {
+      list.push({ name, markdown, savedAt: new Date().toISOString() });
+      btn.textContent = "✓ Saved";
+      btn.classList.add("saved");
+    }
+    persistSavedRecipes(list);
+    refreshSavedLink();
+  }
+
+  function refreshSavedLink() {
+    const n = loadSavedRecipes().length;
+    document.getElementById("saved-link").textContent =
+      n ? `Saved Recipes (${n})` : "Saved Recipes";
+  }
+
+  function extractRecipeMarkdown(name) {
+    const sections = rawMarkdown.split(/\n---+\n/);
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return (sections.find(s =>
+      new RegExp(`^\\*\\*\\[?${esc}\\]?\\*\\*`, "m").test(s.trim())
+    ) || "").trim();
+  }
+
+  function addSaveButtons() {
+    const saved = loadSavedRecipes();
+    document.querySelectorAll("#output p").forEach(p => {
+      // Match <p> whose only child is <strong> — these are recipe name lines
+      if (p.childNodes.length !== 1 || p.firstChild.nodeName !== "STRONG") return;
+      const name = p.firstChild.textContent.replace(/^\[|\]$/, "").trim();
+      if (!name) return;
+      const isSaved = saved.some(r => r.name === name);
+      const btn = document.createElement("button");
+      btn.className = "save-btn" + (isSaved ? " saved" : "");
+      btn.textContent = isSaved ? "✓ Saved" : "Save";
+      btn.onclick = () => toggleSaveRecipe(name, extractRecipeMarkdown(name), btn);
+      p.classList.add("recipe-name-row");
+      p.appendChild(btn);
+    });
+  }
+
+  /* ── Saved recipes modal ─────────────────────────────────── */
+
+  function openSavedModal() {
+    renderSavedModal();
+    document.getElementById("saved-modal").classList.add("open");
+  }
+
+  function closeSavedModal() {
+    document.getElementById("saved-modal").classList.remove("open");
+  }
+
+  document.getElementById("saved-modal").addEventListener("click", e => {
+    if (e.target === document.getElementById("saved-modal")) closeSavedModal();
+  });
+
+  function renderSavedModal() {
+    const list = loadSavedRecipes();
+    const body = document.getElementById("saved-modal-body");
+
+    if (!list.length) {
+      body.innerHTML = '<p class="saved-empty">No saved recipes yet.</p>';
+      return;
+    }
+
+    body.innerHTML = list.map((r, i) => {
+      const date = new Date(r.savedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+      return `
+        <div class="saved-item" data-idx="${i}">
+          <div class="saved-item-hdr">
+            <span class="saved-item-name" onclick="toggleSavedItem(${i})">${escapeHtml(r.name)}</span>
+            <span class="saved-item-meta">${date}</span>
+            <button class="delete-saved-btn" onclick="deleteSavedRecipe(${i})">Remove</button>
+          </div>
+          <div class="saved-item-body" id="saved-body-${i}"></div>
+        </div>`;
+    }).join("");
+  }
+
+  function toggleSavedItem(i) {
+    const body = document.getElementById(`saved-body-${i}`);
+    if (body.classList.toggle("open") && !body.innerHTML.trim()) {
+      const r = loadSavedRecipes()[i];
+      body.innerHTML = (marked_instance.parse || marked_instance)(r.markdown);
+    }
+  }
+
+  function deleteSavedRecipe(i) {
+    const list = loadSavedRecipes();
+    list.splice(i, 1);
+    persistSavedRecipes(list);
+    refreshSavedLink();
+    renderSavedModal();
+  }
+
   /* ── Inventory (localStorage) ───────────────────────────── */
 
   const STORAGE_KEY = "recipe-agent-inventory";
@@ -489,6 +730,7 @@
   });
 
   renderChips();
+  refreshSavedLink();
 
   /* ── Conversation history & streaming ───────────────────── */
 
@@ -574,6 +816,7 @@
           statusEl.textContent = "";
           cursorEl = null;
           renderMarkdown();
+          addSaveButtons();
           // Save assistant reply to history
           history.push({ role: "assistant", content: rawMarkdown });
           // Show closing comment above the refine input
