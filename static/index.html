@@ -386,12 +386,12 @@
     .saved-item-name:hover { color: #c0392b; }
 
     .delete-saved-btn {
-      background: none; border: none;
-      font-size: 1rem; color: #ccc; cursor: pointer;
-      padding: 0; width: auto; margin: 0; line-height: 1;
-      transition: color 0.15s;
+      background: none; border: 1.5px solid #ddd;
+      font-size: 0.78rem; font-weight: 600; color: #999; cursor: pointer;
+      padding: 0.2rem 0.6rem; width: auto; margin: 0;
+      border-radius: 6px; transition: border-color 0.15s, color 0.15s;
     }
-    .delete-saved-btn:hover { color: #c0392b; background: none; transform: none; }
+    .delete-saved-btn:hover { color: #c0392b; border-color: #c0392b; background: none; transform: none; }
 
     .saved-item-body {
       display: none; margin-top: 0.9rem;
@@ -412,6 +412,214 @@
       text-decoration: none; opacity: 0.75;
     }
     #saved-link:hover { opacity: 1; text-decoration: underline; }
+
+    /* ── API key setup overlay ───────────────────────────────── */
+
+    #setup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 246, 238, 0.97);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 3rem 1rem 4rem;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    #setup-overlay.open {
+      display: flex;
+    }
+
+    #setup-box {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+      padding: 2.5rem 2.2rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    #setup-box h2 {
+      font-size: 1.5rem;
+      color: #c0392b;
+      margin-bottom: 0.35rem;
+    }
+
+    #setup-box .setup-sub {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 1.6rem;
+      line-height: 1.5;
+    }
+
+    .setup-steps {
+      background: #fdf6ee;
+      border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1.6rem;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: #444;
+    }
+
+    .setup-steps ol {
+      padding-left: 1.3rem;
+      margin: 0;
+    }
+
+    .setup-steps li { margin: 0.15rem 0; }
+
+    .setup-steps a {
+      color: #c0392b;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .setup-steps a:hover { text-decoration: underline; }
+
+    .setup-steps .note {
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+      color: #888;
+      font-style: italic;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .key-row input {
+      flex: 1;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: monospace;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+
+    .key-row input:focus {
+      outline: none;
+      border-color: #c0392b;
+      background: #fff;
+    }
+
+    .key-row input.error { border-color: #e74c3c; }
+
+    .show-key-btn {
+      flex-shrink: 0;
+      padding: 0 0.9rem;
+      background: #f5f5f5;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #666;
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+      transition: background 0.15s;
+    }
+
+    .show-key-btn:hover { background: #eee; }
+
+    #setup-status {
+      min-height: 1.3em;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      color: #e74c3c;
+    }
+
+    #setup-status.ok { color: #27ae60; }
+
+    /* ── Preferences card ───────────────────────────────────── */
+
+    #prefs-card {
+      margin-bottom: 1.2rem;
+    }
+
+    .prefs-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .prefs-toggle-row .section-label {
+      margin: 0;
+      flex: 1;
+    }
+
+    #prefs-summary {
+      font-size: 0.84rem;
+      color: #aaa;
+    }
+
+    #prefs-chevron {
+      font-size: 0.8rem;
+      color: #bbb;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    #prefs-chevron.open { transform: rotate(90deg); }
+
+    #prefs-body { display: none; }
+    #prefs-body.open { display: block; }
+
+    .prefs-serves-row {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .prefs-serves-row label {
+      font-size: 0.92rem;
+      color: #555;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    #pref-serves {
+      width: 5.5rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+
+    #pref-serves:focus {
+      outline: none;
+      border-color: #c0392b;
+      background: #fff;
+    }
+
+    #pref-dietary {
+      width: 100%;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      resize: vertical;
+      min-height: 4.5rem;
+      transition: border-color 0.2s;
+    }
+
+    #pref-dietary:focus {
+      outline: none;
+      border-color: #c0392b;
+      background: #fff;
+    }
 
     /* ── Misc ────────────────────────────────────────────────── */
 
@@ -451,6 +659,30 @@
   <p>Tell me what's in your fridge or pantry and I'll suggest dinner ideas. Add raw ingredients or leftovers.</p>
   <a id="saved-link" href="#" onclick="openSavedModal(); return false;">Saved Recipes</a>
 </header>
+
+<!-- Preferences -->
+<div class="card" id="prefs-card">
+  <div class="prefs-toggle-row" onclick="togglePrefs()">
+    <div class="section-label" style="margin:0">Preferences</div>
+    <span id="prefs-summary"></span>
+    <span id="prefs-chevron">&#9654;</span>
+  </div>
+  <div id="prefs-body">
+    <hr class="divider" />
+    <div class="prefs-serves-row">
+      <label for="pref-serves">Default serves</label>
+      <input id="pref-serves" type="number" min="1" max="20" value="2" />
+    </div>
+    <div class="section-label" style="margin-bottom:0.5rem">
+      Dietary restrictions
+      <span class="count">optional</span>
+    </div>
+    <textarea
+      id="pref-dietary"
+      placeholder="e.g. vegetarian, pescatarian, no nuts, gluten-free, dairy-free…"
+    ></textarea>
+  </div>
+</div>
 
 <div class="card">
 
@@ -515,6 +747,37 @@
   <div id="feedback-status"></div>
 </div>
 
+<!-- API key setup overlay -->
+<div id="setup-overlay">
+  <div id="setup-box">
+    <h2>🔑 API Key Required</h2>
+    <p class="setup-sub">
+      Recipe Agent uses the Anthropic API to generate recipes. You'll need a free API key to get started.
+    </p>
+
+    <div class="setup-steps">
+      <strong>How to get your API key:</strong>
+      <ol>
+        <li>Go to <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> and sign in (or create a free account).</li>
+        <li>In the left sidebar, click <strong>API Keys</strong>.</li>
+        <li>Click <strong>Create Key</strong>, give it a name, and copy the key.</li>
+        <li>Paste it below and click <strong>Save</strong>.</li>
+      </ol>
+      <p class="note">
+        The key starts with <code>sk-ant-</code>. It will be saved to a local <code>.env</code> file — never sent anywhere except Anthropic's API.
+      </p>
+    </div>
+
+    <label class="section-label" for="key-input" style="margin-bottom:0.5rem;">Your Anthropic API Key</label>
+    <div class="key-row">
+      <input id="key-input" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" />
+      <button class="show-key-btn" id="show-key-btn" onclick="toggleKeyVisibility()">Show</button>
+    </div>
+    <div id="setup-status"></div>
+    <button class="primary-btn" id="save-key-btn" onclick="saveApiKey()">Save &amp; Continue</button>
+  </div>
+</div>
+
 <!-- Saved recipes modal -->
 <div id="saved-modal">
   <div id="saved-modal-box">
@@ -573,9 +836,11 @@
   function addSaveButtons() {
     const saved = loadSavedRecipes();
     document.querySelectorAll("#output p").forEach(p => {
-      // Match <p> whose only child is <strong> — these are recipe name lines
-      if (p.childNodes.length !== 1 || p.firstChild.nodeName !== "STRONG") return;
-      const name = p.firstChild.textContent.replace(/^\[|\]$/, "").trim();
+      // Recipe titles always follow a <hr> (from the --- separator in the markdown).
+      // Sub-section headers (Ingredients, Instructions, etc.) do not.
+      if (p.previousElementSibling?.nodeName !== "HR") return;
+      if (p.firstChild?.nodeName !== "STRONG") return;
+      const name = p.firstChild.textContent.trim();
       if (!name) return;
       const isSaved = saved.some(r => r.name === name);
       const btn = document.createElement("button");
@@ -619,7 +884,7 @@
       <div class="saved-item">
         <div class="saved-item-hdr">
           <span class="saved-item-name" onclick="toggleSavedItem(${i})">${escapeHtml(r.name)}</span>
-          <button class="delete-saved-btn" onclick="deleteSavedRecipe(${i})" title="Remove">&#x2715;</button>
+          <button class="delete-saved-btn" onclick="deleteSavedRecipe(${i})">Remove</button>
         </div>
         <div class="saved-item-body" id="saved-body-${i}"></div>
       </div>`).join("");
@@ -738,6 +1003,119 @@
   renderChips();
   refreshSavedLink();
 
+  /* ── Preferences ───────────────────────────────────────── */
+
+  const PREFS_KEY = "recipe-agent-prefs";
+
+  function loadPreferences() {
+    try { return { serves: 2, dietary: "", ...JSON.parse(localStorage.getItem(PREFS_KEY)) }; }
+    catch { return { serves: 2, dietary: "" }; }
+  }
+
+  function persistPreferences() {
+    const serves  = Math.max(1, parseInt(document.getElementById("pref-serves").value) || 2);
+    const dietary = document.getElementById("pref-dietary").value.trim();
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ serves, dietary }));
+    updatePrefsSummary();
+  }
+
+  function updatePrefsSummary() {
+    const { serves, dietary } = loadPreferences();
+    const parts = [`${serves} serve${serves === 1 ? "" : "s"}`];
+    if (dietary) parts.push(dietary);
+    document.getElementById("prefs-summary").textContent = parts.join(" · ");
+  }
+
+  function togglePrefs() {
+    const open = document.getElementById("prefs-body").classList.toggle("open");
+    document.getElementById("prefs-chevron").classList.toggle("open", open);
+  }
+
+  (function initPrefs() {
+    const { serves, dietary } = loadPreferences();
+    document.getElementById("pref-serves").value  = serves;
+    document.getElementById("pref-dietary").value = dietary;
+    updatePrefsSummary();
+    document.getElementById("pref-serves").addEventListener("input", persistPreferences);
+    document.getElementById("pref-dietary").addEventListener("input", persistPreferences);
+  })();
+
+  /* ── API key setup ──────────────────────────────────────── */
+
+  async function checkApiKey() {
+    try {
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      if (!data.configured) {
+        document.getElementById("setup-overlay").classList.add("open");
+      }
+    } catch {
+      document.getElementById("setup-overlay").classList.add("open");
+    }
+  }
+
+  function toggleKeyVisibility() {
+    const input = document.getElementById("key-input");
+    const btn   = document.getElementById("show-key-btn");
+    if (input.type === "password") {
+      input.type = "text";
+      btn.textContent = "Hide";
+    } else {
+      input.type = "password";
+      btn.textContent = "Show";
+    }
+  }
+
+  async function saveApiKey() {
+    const input     = document.getElementById("key-input");
+    const statusEl  = document.getElementById("setup-status");
+    const saveBtn   = document.getElementById("save-key-btn");
+    const key       = input.value.trim();
+
+    statusEl.className = "";
+    statusEl.textContent = "";
+    input.classList.remove("error");
+
+    if (!key) {
+      statusEl.textContent = "Please paste your API key.";
+      input.classList.add("error");
+      input.focus();
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving…";
+
+    try {
+      const res = await fetch("/api/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ api_key: key }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || "Failed to save key.");
+      }
+      statusEl.className = "ok";
+      statusEl.textContent = "Key saved! You're all set.";
+      setTimeout(() => {
+        document.getElementById("setup-overlay").classList.remove("open");
+      }, 800);
+    } catch (err) {
+      statusEl.textContent = err.message;
+      input.classList.add("error");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save & Continue";
+    }
+  }
+
+  document.getElementById("key-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") saveApiKey();
+  });
+
+  checkApiKey();
+
   /* ── Conversation history & streaming ───────────────────── */
 
   const marked_instance = marked.createInstance ? marked.createInstance() : marked;
@@ -769,11 +1147,11 @@
   }
 
   function buildUserMessage(ingredients, instructions) {
-    let content = `I have: ${ingredients}\n\nWhat dinners can I make tonight?`;
-    if (instructions.trim()) {
-      content = `I have: ${ingredients}\n\nAdditional preferences: ${instructions.trim()}\n\nWhat dinners can I make tonight?`;
-    }
-    return content;
+    const { serves, dietary } = loadPreferences();
+    const prefParts = [`Scale for ${serves} serving${serves === 1 ? "" : "s"}`];
+    if (dietary) prefParts.push(dietary);
+    if (instructions.trim()) prefParts.push(instructions.trim());
+    return `I have: ${ingredients}\n\nPreferences: ${prefParts.join(", ")}\n\nWhat dinners can I make tonight?`;
   }
 
   async function streamFromHistory(messages, statusEl, refineMode = false) {

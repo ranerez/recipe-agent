@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Literal
 
 import anthropic
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -33,6 +33,13 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
+ENV_PATH = Path(__file__).parent / ".env"
+
+
+class SetupRequest(BaseModel):
+    api_key: str
+
+
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str
@@ -40,6 +47,21 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
+
+
+@app.get("/api/status")
+async def api_status():
+    return JSONResponse({"configured": bool(os.environ.get("ANTHROPIC_API_KEY"))})
+
+
+@app.post("/api/setup")
+async def save_api_key(body: SetupRequest):
+    key = body.api_key.strip()
+    if not key:
+        raise HTTPException(status_code=400, detail="API key cannot be empty.")
+    set_key(str(ENV_PATH), "ANTHROPIC_API_KEY", key)
+    os.environ["ANTHROPIC_API_KEY"] = key
+    return JSONResponse({"ok": True})
 
 
 def _get_client() -> anthropic.AsyncAnthropic:
