@@ -27,6 +27,8 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 You can get a key from [console.anthropic.com](https://console.anthropic.com).
 
+(This step is optional. If you don't have the key, you will be promped when you first run the app with instructions how to get it and a field to paste it)
+
 ## Run
 
 **Web app (recommended)**
