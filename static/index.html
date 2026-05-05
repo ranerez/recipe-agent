@@ -413,6 +413,70 @@
     }
     #saved-link:hover { opacity: 1; text-decoration: underline; }
 
+    /* ── Quota / rate-limit error overlay ───────────────────── */
+
+    #quota-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    #quota-overlay.open { display: flex; }
+
+    #quota-box {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      padding: 2.2rem 2rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+
+    #quota-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+
+    #quota-box h3 {
+      font-size: 1.25rem;
+      color: #1a1a1a;
+      margin-bottom: 0.6rem;
+    }
+
+    #quota-desc {
+      color: #666;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    #quota-desc a { color: #c0392b; font-weight: 600; }
+
+    #quota-retry-time {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #c0392b;
+      margin: 1.1rem 0 0.2rem;
+      letter-spacing: -0.5px;
+    }
+
+    #quota-countdown {
+      font-size: 0.88rem;
+      color: #999;
+      margin-bottom: 1.5rem;
+      min-height: 1.3em;
+    }
+
+    #quota-dismiss {
+      max-width: 180px;
+      margin: 0 auto;
+      padding: 0.7rem;
+      font-size: 0.95rem;
+    }
+
     /* ── API key setup overlay ───────────────────────────────── */
 
     #setup-overlay {
@@ -747,6 +811,18 @@
   <div id="feedback-status"></div>
 </div>
 
+<!-- Quota / rate-limit error overlay -->
+<div id="quota-overlay">
+  <div id="quota-box">
+    <div id="quota-icon"></div>
+    <h3 id="quota-title"></h3>
+    <p id="quota-desc"></p>
+    <div id="quota-retry-time"></div>
+    <div id="quota-countdown"></div>
+    <button class="primary-btn" id="quota-dismiss" onclick="closeQuotaOverlay()">Got it</button>
+  </div>
+</div>
+
 <!-- API key setup overlay -->
 <div id="setup-overlay">
   <div id="setup-box">
@@ -1040,6 +1116,71 @@
     document.getElementById("pref-dietary").addEventListener("input", persistPreferences);
   })();
 
+  /* ── Quota / rate-limit error overlay ──────────────────── */
+
+  let quotaCountdownTimer = null;
+
+  function showQuotaOverlay(payload) {
+    clearInterval(quotaCountdownTimer);
+
+    const iconEl   = document.getElementById("quota-icon");
+    const titleEl  = document.getElementById("quota-title");
+    const descEl   = document.getElementById("quota-desc");
+    const retryEl  = document.getElementById("quota-retry-time");
+    const cdownEl  = document.getElementById("quota-countdown");
+
+    retryEl.textContent = "";
+    cdownEl.textContent = "";
+
+    if (payload.kind === "quota") {
+      iconEl.textContent  = "💳";
+      titleEl.textContent = "Credit balance exhausted";
+      descEl.innerHTML    = `Your API key has run out of credits. <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener">Top up your balance</a> to continue.`;
+    } else if (payload.kind === "rate_limit") {
+      iconEl.textContent  = "⏳";
+      titleEl.textContent = "Rate limit reached";
+      descEl.textContent  = "Your API key has hit its rate limit. You can try again at:";
+
+      const secs    = parseInt(payload.retry_after) || 60;
+      const retryAt = new Date(Date.now() + secs * 1000);
+      retryEl.textContent = retryAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      function tick() {
+        const left = Math.max(0, Math.round((retryAt - Date.now()) / 1000));
+        if (left === 0) {
+          cdownEl.textContent = "You can try again now.";
+          clearInterval(quotaCountdownTimer);
+          return;
+        }
+        const m = Math.floor(left / 60), s = left % 60;
+        cdownEl.textContent = m > 0
+          ? `in ${m}m ${s.toString().padStart(2, "0")}s`
+          : `in ${left} second${left === 1 ? "" : "s"}`;
+      }
+      tick();
+      quotaCountdownTimer = setInterval(tick, 1000);
+    } else if (payload.kind === "overloaded") {
+      iconEl.textContent  = "🔄";
+      titleEl.textContent = "API temporarily overloaded";
+      descEl.textContent  = "Anthropic's API is experiencing high demand. Wait a moment and try again.";
+    } else {
+      iconEl.textContent  = "⚠️";
+      titleEl.textContent = "API error";
+      descEl.textContent  = payload.message || "An unexpected error occurred.";
+    }
+
+    document.getElementById("quota-overlay").classList.add("open");
+  }
+
+  function closeQuotaOverlay() {
+    clearInterval(quotaCountdownTimer);
+    document.getElementById("quota-overlay").classList.remove("open");
+  }
+
+  document.getElementById("quota-overlay").addEventListener("click", e => {
+    if (e.target === document.getElementById("quota-overlay")) closeQuotaOverlay();
+  });
+
   /* ── API key setup ──────────────────────────────────────── */
 
   async function checkApiKey() {
@@ -1196,6 +1337,17 @@
       for (const line of lines) {
         if (!line.startsWith("data: ")) continue;
         const chunk = line.slice(6);
+        if (chunk.startsWith("[ERROR:")) {
+          try {
+            const payload = JSON.parse(chunk.slice(7, -1));
+            cursorEl = null;
+            renderMarkdown();
+            showQuotaOverlay(payload);
+          } catch {
+            throw new Error("API error — check your key or try again.");
+          }
+          return;
+        }
         if (chunk === "[DONE]") {
           statusEl.textContent = "";
           cursorEl = null;
