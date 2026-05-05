@@ -1004,6 +1004,7 @@
 
     if (!items.length) {
       container.innerHTML = '<span class="empty-hint">No ingredients yet — add some above.</span>';
+      document.getElementById("submit-btn").disabled = true;
       return;
     }
 
@@ -1013,6 +1014,7 @@
         <button class="chip-remove" data-name="${escapeHtml(item)}" title="Remove">&#x2715;</button>
       </span>
     `).join("");
+    document.getElementById("submit-btn").disabled = false;
   }
 
   function escapeHtml(str) {
