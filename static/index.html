@@ -669,7 +669,7 @@
     container.innerHTML = items.map(item => `
       <span class="chip" data-name="${escapeHtml(item)}">
         ${escapeHtml(item)}
-        <button class="chip-remove" onclick="removeIngredient(${JSON.stringify(item)})" title="Remove">&#x2715;</button>
+        <button class="chip-remove" data-name="${escapeHtml(item)}" title="Remove">&#x2715;</button>
       </span>
     `).join("");
   }
@@ -728,6 +728,11 @@
 
   document.getElementById("inv-input").addEventListener("keydown", e => {
     if (e.key === "Enter") addIngredient();
+  });
+
+  document.getElementById("chips").addEventListener("click", e => {
+    const btn = e.target.closest(".chip-remove");
+    if (btn) removeIngredient(btn.dataset.name);
   });
 
   renderChips();
