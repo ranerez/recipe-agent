@@ -259,6 +259,22 @@
     }
     #output th { background: #fdf6ee; font-weight: 600; }
 
+    /* ── AI comment ─────────────────────────────────────────── */
+
+    #ai-comment {
+      display: none;
+      background: #fdf6ee;
+      border-left: 3px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    #ai-comment.visible { display: block; }
+
     /* ── Feedback card ───────────────────────────────────────── */
 
     #feedback-card {
@@ -368,6 +384,7 @@
 
 <!-- Feedback -->
 <div id="feedback-card">
+  <div id="ai-comment"></div>
   <div class="section-label">Refine the results</div>
   <div class="add-row">
     <input
@@ -491,6 +508,18 @@
     if (cursorEl) outputEl.appendChild(cursorEl);
   }
 
+  function extractAiComment(markdown) {
+    const paras = markdown.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+    for (let i = paras.length - 1; i >= 0; i--) {
+      const p = paras[i];
+      if (!p.startsWith('#') && !p.startsWith('-') && !p.startsWith('*') &&
+          !p.startsWith('|') && !p.startsWith('---') && !p.match(/^\d+\./)) {
+        return p;
+      }
+    }
+    return null;
+  }
+
   function buildUserMessage(ingredients, instructions) {
     let content = `I have: ${ingredients}\n\nWhat dinners can I make tonight?`;
     if (instructions.trim()) {
@@ -547,6 +576,15 @@
           renderMarkdown();
           // Save assistant reply to history
           history.push({ role: "assistant", content: rawMarkdown });
+          // Show closing comment above the refine input
+          const commentEl = document.getElementById("ai-comment");
+          const comment = extractAiComment(rawMarkdown);
+          if (comment) {
+            commentEl.innerHTML = (marked_instance.parse || marked_instance)(comment);
+            commentEl.classList.add("visible");
+          } else {
+            commentEl.classList.remove("visible");
+          }
           feedbackCard.classList.add("visible");
           document.getElementById("feedback-input").focus();
           return;
