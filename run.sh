@@ -14,4 +14,4 @@ fi
 
 echo "Starting Recipe Agent"
 echo "→ http://localhost:8000"
-.venv/bin/uvicorn app:app --reload
+.venv/bin/uvicorn app:app --reload --host localhost

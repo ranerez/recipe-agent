@@ -29,6 +29,19 @@ You can get a key from [console.anthropic.com](https://console.anthropic.com).
 
 (This step is optional. If you don't have the key, you will be prompted when you first run the app with instructions on how to get it and a field to enter it.)
 
+## Build the frontend
+
+The web UI is a React/TypeScript app (in `frontend/`) that builds to `static/`. Run this once after cloning, and again any time you change files in `frontend/src/`:
+
+```bash
+cd frontend
+npm install   # first time only
+npm run build
+cd ..
+```
+
+The build output lands in `static/` and is served automatically by the FastAPI backend.
+
 ## Run
 
 **Web app (recommended)**
