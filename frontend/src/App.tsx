@@ -34,6 +34,9 @@ export default function App() {
   const [quotaPayload, setQuotaPayload] = useState<QuotaPayload | null>(null);
   const [showSetup, setShowSetup] = useState(false);
 
+  // Ref mirrors rawMarkdown state so the streaming loop can read the accumulated
+  // text synchronously on [DONE] — setState is async and wouldn't reflect the
+  // latest value within the same while-loop iteration.
   const rawMarkdownRef = useRef('');
 
   useEffect(() => {
@@ -115,6 +118,7 @@ export default function App() {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
+        // Keep the last fragment: a read() chunk may end mid-line.
         buffer = lines.pop()!;
 
         for (const line of lines) {
@@ -141,6 +145,7 @@ export default function App() {
             return;
           }
 
+          // Server escapes newlines as \n so they don't break SSE framing.
           rawMarkdownRef.current += chunk.replace(/\\n/g, '\n');
           setRawMarkdown(rawMarkdownRef.current);
         }
@@ -178,7 +183,9 @@ export default function App() {
 
     await streamFromHistory(newHistory, setRefineStatus);
 
-    // If error, remove the failed user message
+    // On success, streamFromHistory appended an assistant message, so the last
+    // role is 'assistant' and this is a no-op. On error it was never appended,
+    // so the last role is still 'user' — remove it to keep history consistent.
     setHistory(h => {
       if (h[h.length - 1]?.role === 'user') return h.slice(0, -1);
       return h;

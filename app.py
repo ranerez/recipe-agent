@@ -24,6 +24,8 @@ app = FastAPI(title="Recipe Agent")
 
 @app.middleware("http")
 async def redirect_ip_to_localhost(request: Request, call_next):
+    # Cookies set on "localhost" aren't sent to "127.0.0.1" (different origin).
+    # Redirecting ensures the browser always lands on the canonical hostname.
     if request.url.hostname == "127.0.0.1":
         url = request.url.replace(hostname="localhost")
         return RedirectResponse(url=str(url))
@@ -97,6 +99,8 @@ async def stream_recipes(body: ChatRequest):
                 messages=[{"role": m.role, "content": m.content} for m in body.messages],
             ) as stream:
                 async for text in stream.text_stream:
+                    # Escape newlines so each SSE event stays on one line.
+                    # The client unescapes \n back to newlines when it receives chunks.
                     yield f"data: {text.replace(chr(10), chr(92) + 'n')}\n\n"
             yield "data: [DONE]\n\n"
         except anthropic.RateLimitError as e:
