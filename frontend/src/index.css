@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Blinking cursor during streaming */
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: #c0392b;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: blink 0.9s step-end infinite;
+}
+
+/* Markdown output prose overrides */
+.recipe-prose {
+  font-size: 0.97rem;
+  line-height: 1.7;
+}
+
+.recipe-prose h1,
+.recipe-prose h2,
+.recipe-prose h3 {
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.recipe-prose h2 {
+  font-size: 1.3rem;
+  color: #c0392b;
+}
+
+.recipe-prose h3 {
+  font-size: 1.1rem;
+}
+
+.recipe-prose p {
+  margin: 0.5rem 0;
+}
+
+.recipe-prose ul,
+.recipe-prose ol {
+  padding-left: 1.4rem;
+  margin: 0.4rem 0;
+}
+
+.recipe-prose li {
+  margin: 0.2rem 0;
+}
+
+.recipe-prose strong {
+  color: #1a1a1a;
+}
+
+.recipe-prose em {
+  color: #555;
+}
+
+.recipe-prose hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 1.2rem 0;
+}
+
+.recipe-prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.8rem 0;
+  font-size: 0.9rem;
+}
+
+.recipe-prose th,
+.recipe-prose td {
+  border: 1px solid #e5e5e5;
+  padding: 0.4rem 0.7rem;
+  text-align: left;
+}
+
+.recipe-prose th {
+  background: #fdf6ee;
+  font-weight: 600;
+}
+
+/* Saved modal recipe body */
+.saved-recipe-prose {
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+.saved-recipe-prose h2 {
+  font-size: 1.2rem;
+  color: #c0392b;
+  margin: 1rem 0 0.4rem;
+}
+
+.saved-recipe-prose h3 {
+  font-size: 1rem;
+  margin: 0.8rem 0 0.3rem;
+}
+
+.saved-recipe-prose p {
+  margin: 0.4rem 0;
+}
+
+.saved-recipe-prose ul,
+.saved-recipe-prose ol {
+  padding-left: 1.4rem;
+  margin: 0.3rem 0;
+}
+
+.saved-recipe-prose li {
+  margin: 0.15rem 0;
+}
+
+.saved-recipe-prose hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0.8rem 0;
+}
