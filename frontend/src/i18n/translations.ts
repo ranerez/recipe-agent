@@ -43,6 +43,7 @@ const en: Strings = {
   'inventory.prefsPlaceholder': 'e.g. quick meals only, cooking for 4, no dairy, something spicy…',
   'inventory.find': 'Find Recipes',
   'inventory.finding': 'Finding recipes…',
+  'inventory.clear': 'Clear',
   'inventory.optional': 'optional',
 
   'output.save': 'Save',
@@ -137,6 +138,7 @@ const es: Strings = {
   'inventory.prefsPlaceholder': 'p.ej. comidas rápidas, para 4 personas, sin lácteos, algo picante…',
   'inventory.find': 'Buscar recetas',
   'inventory.finding': 'Buscando recetas…',
+  'inventory.clear': 'Limpiar',
   'inventory.optional': 'opcional',
 
   'output.save': 'Guardar',
@@ -231,6 +233,7 @@ const fr: Strings = {
   'inventory.prefsPlaceholder': 'p.ex. repas rapides, pour 4 personnes, sans lactose, quelque chose de piquant…',
   'inventory.find': 'Trouver des recettes',
   'inventory.finding': 'Recherche en cours…',
+  'inventory.clear': 'Effacer',
   'inventory.optional': 'facultatif',
 
   'output.save': 'Sauvegarder',
@@ -325,6 +328,7 @@ const de: Strings = {
   'inventory.prefsPlaceholder': 'z.B. nur schnelle Gerichte, für 4 Personen, ohne Milch, etwas Scharfes…',
   'inventory.find': 'Rezepte finden',
   'inventory.finding': 'Suche läuft…',
+  'inventory.clear': 'Löschen',
   'inventory.optional': 'optional',
 
   'output.save': 'Speichern',
@@ -419,6 +423,7 @@ const he: Strings = {
   'inventory.prefsPlaceholder': 'למשל: ארוחות מהירות בלבד, בישול ל-4, ללא חלב, משהו חריף…',
   'inventory.find': 'מצא מתכונים',
   'inventory.finding': 'מחפש מתכונים…',
+  'inventory.clear': 'נקה',
   'inventory.optional': 'אופציונלי',
 
   'output.save': 'שמור',
@@ -513,6 +518,7 @@ const ar: Strings = {
   'inventory.prefsPlaceholder': 'مثال: وجبات سريعة فقط، للطهي لـ4 أشخاص، بدون ألبان، شيء حار…',
   'inventory.find': 'ابحث عن وصفات',
   'inventory.finding': 'جاري البحث عن وصفات…',
+  'inventory.clear': 'مسح',
   'inventory.optional': 'اختياري',
 
   'output.save': 'احفظ',

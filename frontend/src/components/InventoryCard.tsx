@@ -5,20 +5,24 @@ interface InventoryCardProps {
   inventory: string[];
   instructions: string;
   isStreaming: boolean;
+  hasResults: boolean;
   onAdd: (raw: string) => string[];
   onRemove: (name: string) => void;
   onInstructionsChange: (v: string) => void;
   onSubmit: () => void;
+  onClear: () => void;
 }
 
 export default function InventoryCard({
   inventory,
   instructions,
   isStreaming,
+  hasResults,
   onAdd,
   onRemove,
   onInstructionsChange,
   onSubmit,
+  onClear,
 }: InventoryCardProps) {
   const { t } = useLang();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -109,13 +113,23 @@ export default function InventoryCard({
         className="w-full border-[1.5px] border-[#ddd] rounded-lg px-[0.9rem] py-[0.6rem] text-[0.95rem] bg-[#fafafa] focus:outline-none focus:border-brand focus:bg-white transition-colors mb-4"
       />
 
-      <button
-        onClick={onSubmit}
-        disabled={inventory.length === 0 || isStreaming}
-        className="w-full py-[0.85rem] bg-brand text-white text-[1.05rem] font-semibold rounded-xl hover:bg-brand-dark active:scale-[0.98] disabled:bg-brand-light disabled:cursor-not-allowed transition-all"
-      >
-        {isStreaming ? t('inventory.finding') : t('inventory.find')}
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={onSubmit}
+          disabled={inventory.length === 0 || isStreaming}
+          className="flex-1 py-[0.85rem] bg-brand text-white text-[1.05rem] font-semibold rounded-xl hover:bg-brand-dark active:scale-[0.98] disabled:bg-brand-light disabled:cursor-not-allowed transition-all"
+        >
+          {isStreaming ? t('inventory.finding') : t('inventory.find')}
+        </button>
+        {hasResults && !isStreaming && (
+          <button
+            onClick={onClear}
+            className="px-5 py-[0.85rem] text-[1.05rem] font-semibold rounded-xl border-[1.5px] border-[#ddd] text-[#888] hover:border-brand hover:text-brand active:scale-[0.98] transition-all bg-white"
+          >
+            {t('inventory.clear')}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

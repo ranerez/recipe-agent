@@ -80,6 +80,16 @@ export default function App() {
     return duplicates;
   }
 
+  function handleClear() {
+    setRawMarkdown('');
+    rawMarkdownRef.current = '';
+    setHistory([]);
+    setShowFeedback(false);
+    setAiComment('');
+    setStreamStatus('');
+    setRefineStatus('');
+  }
+
   function handleRemoveIngredient(name: string) {
     const updated = inventory.filter(i => i !== name);
     saveInventory(updated);
@@ -218,10 +228,12 @@ export default function App() {
         inventory={inventory}
         instructions={instructions}
         isStreaming={isStreaming}
+        hasResults={!!rawMarkdown}
         onAdd={handleAddIngredient}
         onRemove={handleRemoveIngredient}
         onInstructionsChange={setInstructions}
         onSubmit={handleSubmit}
+        onClear={handleClear}
       />
 
       {streamStatus && !isStreaming && (
