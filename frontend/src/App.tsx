@@ -13,6 +13,7 @@ import InventoryCard from './components/InventoryCard';
 import OutputCard from './components/OutputCard';
 import FeedbackCard from './components/FeedbackCard';
 import SavedModal from './components/SavedModal';
+import AboutPanel from './components/AboutPanel';
 import QuotaOverlay from './components/QuotaOverlay';
 import SetupOverlay from './components/SetupOverlay';
 
@@ -33,6 +34,7 @@ export default function App() {
   const [instructions, setInstructions] = useState('');
 
   const [showSavedModal, setShowSavedModal] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [quotaPayload, setQuotaPayload] = useState<QuotaPayload | null>(null);
   const [showSetup, setShowSetup] = useState(false);
 
@@ -203,7 +205,7 @@ export default function App() {
 
   return (
     <div dir={dir} className="bg-warm-bg min-h-screen flex flex-col items-center px-4 py-8 pb-16">
-      <Header savedCount={savedRecipes.length} onSavedClick={() => setShowSavedModal(true)} />
+      <Header savedCount={savedRecipes.length} onSavedClick={() => setShowSavedModal(true)} onAboutClick={() => setShowAbout(true)} />
 
       <PreferencesCard
         prefs={prefs}
@@ -249,6 +251,8 @@ export default function App() {
           onDelete={handleDeleteSaved}
         />
       )}
+
+      {showAbout && <AboutPanel onClose={() => setShowAbout(false)} />}
 
       {quotaPayload && (
         <QuotaOverlay

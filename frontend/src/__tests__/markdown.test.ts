@@ -134,9 +134,9 @@ Let me know if you want adjustments!`;
 
   it('extracts correct recipe titles', () => {
     const sections = parseRecipeSections(SAMPLE);
-    const recipes = sections.filter(s => s.type === 'recipe');
-    expect(recipes[0].title).toBe('Chicken Stir-Fry');
-    expect(recipes[1].title).toBe('Rice Bowl');
+    const recipes = sections.filter(s => s.type === 'recipe' as const);
+    expect(recipes[0].type === 'recipe' && recipes[0].title).toBe('Chicken Stir-Fry');
+    expect(recipes[1].type === 'recipe' && recipes[1].title).toBe('Rice Bowl');
   });
 
   it('classifies non-recipe content as text sections', () => {
@@ -150,7 +150,8 @@ Let me know if you want adjustments!`;
     const sections = parseRecipeSections(md);
     expect(sections.length).toBe(1);
     expect(sections[0].type).toBe('recipe');
-    expect(sections[0].title).toBe('Pasta Carbonara');
+    const s = sections[0];
+    expect(s.type === 'recipe' && s.title).toBe('Pasta Carbonara');
   });
 
   it('returns a single text section for plain text', () => {

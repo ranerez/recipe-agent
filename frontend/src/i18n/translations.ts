@@ -94,6 +94,22 @@ const en: Strings = {
   'app.addIngredients': 'Add some ingredients to your pantry first.',
   'app.apiError': 'API error — check your key or try again.',
   'app.error': 'Error: ',
+
+  'about.link': 'About',
+  'about.title': 'About Recipe Agent',
+  'about.tagline': 'A dinner recipe assistant powered by Claude AI.',
+  'about.whatTitle': 'What it does',
+  'about.what': 'Tell it what ingredients you have on hand — leftovers, pantry staples, or whatever is in your fridge — and it suggests 2–3 dinner recipes varying in cuisine, complexity, and cook time. It always includes at least one quick option (under 30 min) and one more elaborate dish.',
+  'about.eachRecipeTitle': 'Each recipe includes',
+  'about.eachRecipe1': 'Prep and cook time, difficulty, and serving size',
+  'about.eachRecipe2': 'Full ingredient list — with notes on anything you\'d need to buy',
+  'about.eachRecipe3': 'Step-by-step instructions with temperatures and visual cues',
+  'about.eachRecipe4': 'Tips for substitutions, storage, and variations',
+  'about.cachingTitle': 'Prompt caching',
+  'about.caching': 'The app uses Anthropic\'s prompt caching feature. After the first request, responses are ~90% cheaper — the large culinary knowledge base embedded in the system prompt is cached and reused across requests.',
+  'about.keyTitle': 'Your API key',
+  'about.key': 'Recipes are generated with your own Anthropic API key, stored locally in a .env file and sent only to Anthropic\'s API — never to any other server.',
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
@@ -172,6 +188,22 @@ const es: Strings = {
   'app.addIngredients': 'Añade algunos ingredientes a tu despensa primero.',
   'app.apiError': 'Error de API — verifica tu clave o inténtalo de nuevo.',
   'app.error': 'Error: ',
+
+  'about.link': 'Acerca de',
+  'about.title': 'Acerca de Recipe Agent',
+  'about.tagline': 'Un asistente de recetas para la cena impulsado por Claude AI.',
+  'about.whatTitle': 'Qué hace',
+  'about.what': 'Dile qué ingredientes tienes a mano — sobras, básicos de despensa o lo que haya en la nevera — y te sugerirá 2–3 recetas para cenar variando en cocina, complejidad y tiempo de preparación. Siempre incluye al menos una opción rápida (menos de 30 min) y un plato más elaborado.',
+  'about.eachRecipeTitle': 'Cada receta incluye',
+  'about.eachRecipe1': 'Tiempo de preparación y cocción, dificultad y raciones',
+  'about.eachRecipe2': 'Lista completa de ingredientes — con notas sobre lo que necesitarías comprar',
+  'about.eachRecipe3': 'Instrucciones paso a paso con temperaturas y señales visuales',
+  'about.eachRecipe4': 'Consejos de sustituciones, almacenamiento y variaciones',
+  'about.cachingTitle': 'Caché de prompts',
+  'about.caching': 'La app usa la función de caché de prompts de Anthropic. Tras la primera solicitud, las respuestas son ~90% más baratas — la gran base de conocimiento culinario del prompt del sistema se almacena en caché y se reutiliza.',
+  'about.keyTitle': 'Tu clave API',
+  'about.key': 'Las recetas se generan con tu propia clave API de Anthropic, almacenada localmente en un archivo .env y enviada solo a la API de Anthropic — nunca a ningún otro servidor.',
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
@@ -250,6 +282,22 @@ const fr: Strings = {
   'app.addIngredients': "Ajoutez d'abord des ingrédients à votre garde-manger.",
   'app.apiError': 'Erreur API — vérifiez votre clé ou réessayez.',
   'app.error': 'Erreur : ',
+
+  'about.link': 'À propos',
+  'about.title': 'À propos de Recipe Agent',
+  'about.tagline': 'Un assistant de recettes de dîner propulsé par Claude AI.',
+  'about.whatTitle': 'Ce que ça fait',
+  'about.what': "Dites-lui quels ingrédients vous avez sous la main — restes, aliments de base ou ce qui est dans le réfrigérateur — et il suggère 2–3 recettes de dîner variant par cuisine, complexité et temps de cuisson. Il inclut toujours au moins une option rapide (moins de 30 min) et un plat plus élaboré.",
+  'about.eachRecipeTitle': 'Chaque recette comprend',
+  'about.eachRecipe1': 'Temps de préparation et de cuisson, difficulté et portions',
+  'about.eachRecipe2': "Liste complète des ingrédients — avec des notes sur ce qu'il faudrait acheter",
+  'about.eachRecipe3': 'Instructions étape par étape avec températures et repères visuels',
+  'about.eachRecipe4': 'Conseils de substitution, conservation et variations',
+  'about.cachingTitle': 'Mise en cache des prompts',
+  'about.caching': "L'app utilise la fonctionnalité de mise en cache des prompts d'Anthropic. Après la première requête, les réponses coûtent ~90% moins cher — la grande base de connaissances culinaires du prompt système est mise en cache et réutilisée.",
+  'about.keyTitle': 'Votre clé API',
+  'about.key': "Les recettes sont générées avec votre propre clé API Anthropic, stockée localement dans un fichier .env et envoyée uniquement à l'API d'Anthropic — jamais à un autre serveur.",
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
@@ -328,6 +376,22 @@ const de: Strings = {
   'app.addIngredients': 'Fügen Sie zuerst Zutaten zu Ihrer Vorratskammer hinzu.',
   'app.apiError': 'API-Fehler — überprüfen Sie Ihren Schlüssel oder versuchen Sie es erneut.',
   'app.error': 'Fehler: ',
+
+  'about.link': 'Über',
+  'about.title': 'Über Recipe Agent',
+  'about.tagline': 'Ein Abendessen-Rezeptassistent powered by Claude AI.',
+  'about.whatTitle': 'Was es macht',
+  'about.what': 'Sagen Sie, welche Zutaten Sie zur Hand haben — Reste, Vorratsprodukte oder was immer im Kühlschrank ist — und es schlägt 2–3 Abendessen vor, die in Küche, Komplexität und Kochzeit variieren. Es enthält immer mindestens eine schnelle Option (unter 30 min) und ein aufwändigeres Gericht.',
+  'about.eachRecipeTitle': 'Jedes Rezept enthält',
+  'about.eachRecipe1': 'Vor- und Zubereitungszeit, Schwierigkeit und Portionsgröße',
+  'about.eachRecipe2': 'Vollständige Zutatenliste — mit Hinweisen auf alles, was man kaufen müsste',
+  'about.eachRecipe3': 'Schritt-für-Schritt-Anleitung mit Temperaturen und visuellen Hinweisen',
+  'about.eachRecipe4': 'Tipps zu Substitutionen, Aufbewahrung und Variationen',
+  'about.cachingTitle': 'Prompt-Caching',
+  'about.caching': 'Die App nutzt Anthropics Prompt-Caching-Funktion. Nach der ersten Anfrage sind die Antworten ~90% günstiger — die umfangreiche kulinarische Wissensbasis im System-Prompt wird zwischengespeichert und wiederverwendet.',
+  'about.keyTitle': 'Ihr API-Schlüssel',
+  'about.key': 'Rezepte werden mit Ihrem eigenen Anthropic API-Schlüssel generiert, der lokal in einer .env-Datei gespeichert und nur an die Anthropic API gesendet wird — nie an einen anderen Server.',
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
@@ -406,6 +470,22 @@ const he: Strings = {
   'app.addIngredients': 'הוסף תחילה מצרכים למזווה שלך.',
   'app.apiError': 'שגיאת API — בדוק את המפתח שלך או נסה שוב.',
   'app.error': 'שגיאה: ',
+
+  'about.link': 'אודות',
+  'about.title': 'אודות Recipe Agent',
+  'about.tagline': 'עוזר מתכונים לארוחת ערב מבוסס Claude AI.',
+  'about.whatTitle': 'מה האפליקציה עושה',
+  'about.what': 'ספר לה אילו מצרכים יש לך — שאריות, מוצרי בסיס מהמזווה, או כל מה שיש במקרר — והיא תציע 2–3 מתכונים לארוחת ערב בסגנונות מטבח, מורכבויות וזמני בישול שונים. תמיד כלולה לפחות אפשרות מהירה (פחות מ-30 דקות) ומנה מורכבת יותר.',
+  'about.eachRecipeTitle': 'כל מתכון כולל',
+  'about.eachRecipe1': 'זמן הכנה ובישול, רמת קושי וגודל מנה',
+  'about.eachRecipe2': 'רשימת מצרכים מלאה — עם הערות על מה שצריך לקנות',
+  'about.eachRecipe3': 'הוראות שלב אחר שלב עם טמפרטורות ורמזים ויזואליים',
+  'about.eachRecipe4': 'טיפים לתחליפים, אחסון ווריאציות',
+  'about.cachingTitle': 'שמירה במטמון (Prompt Caching)',
+  'about.caching': 'האפליקציה משתמשת בתכונת שמירת הפרומפטים של Anthropic. לאחר הבקשה הראשונה, העלות יורדת בכ-90% — בסיס הידע הקולינרי הגדול בפרומפט המערכת נשמר ומשמש שוב.',
+  'about.keyTitle': 'מפתח ה-API שלך',
+  'about.key': 'המתכונים נוצרים באמצעות מפתח ה-API האישי שלך, המאוחסן מקומית בקובץ .env ונשלח רק ל-API של Anthropic — לא לשרת אחר.',
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
@@ -484,6 +564,22 @@ const ar: Strings = {
   'app.addIngredients': 'أضف بعض المكونات إلى مخزنك أولاً.',
   'app.apiError': 'خطأ في API — تحقق من مفتاحك أو حاول مجدداً.',
   'app.error': 'خطأ: ',
+
+  'about.link': 'حول',
+  'about.title': 'حول Recipe Agent',
+  'about.tagline': 'مساعد وصفات العشاء مدعوم بـ Claude AI.',
+  'about.whatTitle': 'ما الذي يفعله',
+  'about.what': 'أخبره بالمكونات المتاحة لديك — بقايا الطعام أو أساسيات المخزن أو ما في الثلاجة — وسيقترح 2–3 وصفات عشاء تتنوع في المطبخ والتعقيد ووقت الطهي. يتضمن دائماً خياراً سريعاً (أقل من 30 دقيقة) وطبقاً أكثر تفصيلاً.',
+  'about.eachRecipeTitle': 'كل وصفة تتضمن',
+  'about.eachRecipe1': 'وقت التحضير والطهي، الصعوبة، وعدد الحصص',
+  'about.eachRecipe2': 'قائمة كاملة بالمكونات — مع ملاحظات حول ما قد تحتاج لشرائه',
+  'about.eachRecipe3': 'تعليمات خطوة بخطوة مع درجات الحرارة والإشارات البصرية',
+  'about.eachRecipe4': 'نصائح للبدائل والتخزين والتنويعات',
+  'about.cachingTitle': 'تخزين الأوامر مؤقتاً',
+  'about.caching': 'يستخدم التطبيق ميزة تخزين الأوامر من Anthropic. بعد الطلب الأول، تنخفض تكلفة الاستجابات بنحو 90% — إذ يُخزَّن قاعدة المعرفة الطهوية الكبيرة في النظام ويُعاد استخدامها.',
+  'about.keyTitle': 'مفتاح API الخاص بك',
+  'about.key': 'تُولَّد الوصفات باستخدام مفتاح Anthropic API الخاص بك، المخزَّن محلياً في ملف .env ولا يُرسَل إلا إلى API الخاصة بـ Anthropic — وليس إلى أي خادم آخر.',
+
   'footer.copyright': '© 2026 Ran Erez',
 };
 
