@@ -1,8 +1,10 @@
 import type { SavedRecipe, Preferences } from '../types';
+import type { LangCode } from '../i18n/translations';
 
 const INVENTORY_KEY = 'recipe-agent-inventory';
 const SAVED_KEY = 'recipe-agent-saved';
 const PREFS_KEY = 'recipe-agent-prefs';
+const LANG_KEY = 'recipe-agent-lang';
 
 function safeGet<T>(key: string, fallback: T): T {
   try {
@@ -35,4 +37,14 @@ export function loadPreferences(): Preferences {
 
 export function persistPreferences(prefs: Preferences): void {
   localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+}
+
+export function loadLang(): LangCode {
+  const raw = localStorage.getItem(LANG_KEY);
+  const valid: LangCode[] = ['en', 'es', 'fr', 'de', 'he', 'ar'];
+  return (raw && valid.includes(raw as LangCode)) ? (raw as LangCode) : 'en';
+}
+
+export function persistLang(lang: LangCode): void {
+  localStorage.setItem(LANG_KEY, lang);
 }

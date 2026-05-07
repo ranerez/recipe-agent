@@ -3,6 +3,7 @@
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Literal
@@ -12,7 +13,7 @@ from dotenv import load_dotenv, set_key
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 load_dotenv()
 
@@ -31,6 +32,16 @@ async def redirect_ip_to_localhost(request: Request, call_next):
         return RedirectResponse(url=str(url))
     return await call_next(request)
 
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+
 static_dir = Path(__file__).parent / "static"
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
@@ -39,17 +50,28 @@ if static_dir.exists():
 ENV_PATH = Path(__file__).parent / ".env"
 
 
+_API_KEY_RE = re.compile(r'^sk-ant-[A-Za-z0-9_\-]{10,}$')
+
+
 class SetupRequest(BaseModel):
-    api_key: str
+    api_key: str = Field(..., min_length=1, max_length=300)
+
+    @field_validator('api_key')
+    @classmethod
+    def validate_api_key_format(cls, v: str) -> str:
+        v = v.strip()
+        if not _API_KEY_RE.match(v):
+            raise ValueError("Invalid API key format — expected sk-ant-…")
+        return v
 
 
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]
-    content: str
+    content: str = Field(..., min_length=1, max_length=20_000)
 
 
 class ChatRequest(BaseModel):
-    messages: list[ChatMessage]
+    messages: list[ChatMessage] = Field(..., min_length=1, max_length=40)
 
 
 @app.get("/api/status")

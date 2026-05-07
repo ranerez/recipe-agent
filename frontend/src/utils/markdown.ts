@@ -1,9 +1,11 @@
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 marked.setOptions({ breaks: true });
 
 export function parseMarkdown(md: string): string {
-  return marked.parse(md) as string;
+  const raw = marked.parse(md) as string;
+  return DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
 }
 
 export function extractAiComment(markdown: string): string | null {

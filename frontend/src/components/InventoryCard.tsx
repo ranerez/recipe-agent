@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useLang } from '../i18n/LangContext';
 
 interface InventoryCardProps {
   inventory: string[];
@@ -19,6 +20,7 @@ export default function InventoryCard({
   onInstructionsChange,
   onSubmit,
 }: InventoryCardProps) {
+  const { t } = useLang();
   const inputRef = useRef<HTMLInputElement>(null);
   const [shakingInput, setShakingInput] = useState(false);
   const [pulsingChips, setPulsingChips] = useState<Set<string>>(new Set());
@@ -37,14 +39,16 @@ export default function InventoryCard({
   }
 
   const sorted = [...inventory].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  const itemCount = inventory.length;
+  const itemWord = itemCount === 1 ? t('inventory.item') : t('inventory.items');
 
   return (
     <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 w-full max-w-[760px]">
-      {/* Inventory label */}
+      {/* Title row */}
       <div className="flex items-center justify-between font-semibold text-[0.95rem] text-[#444] mb-3">
-        My Pantry &amp; Fridge
+        {t('inventory.title')}
         <span className="font-normal text-[0.82rem] text-[#aaa]">
-          {inventory.length > 0 ? `${inventory.length} item${inventory.length === 1 ? '' : 's'}` : ''}
+          {itemCount > 0 ? `${itemCount} ${itemWord}` : ''}
         </span>
       </div>
 
@@ -53,8 +57,9 @@ export default function InventoryCard({
         <input
           ref={inputRef}
           type="text"
-          placeholder="Add an ingredient…"
+          placeholder={t('inventory.addPlaceholder')}
           autoComplete="off"
+          maxLength={200}
           onKeyDown={e => e.key === 'Enter' && handleAdd()}
           onAnimationEnd={() => setShakingInput(false)}
           className={`flex-1 border-[1.5px] border-[#ddd] rounded-lg px-[0.85rem] py-[0.55rem] text-[0.95rem] bg-[#fafafa] focus:outline-none focus:border-brand focus:bg-white transition-colors ${shakingInput ? 'animate-shake' : ''}`}
@@ -63,7 +68,7 @@ export default function InventoryCard({
           onClick={handleAdd}
           className="px-[1.1rem] py-[0.55rem] text-[0.95rem] font-semibold bg-brand text-white rounded-lg hover:bg-brand-dark active:scale-[0.98] transition-all"
         >
-          Add
+          {t('inventory.add')}
         </button>
       </div>
 
@@ -71,7 +76,7 @@ export default function InventoryCard({
       <div className="flex flex-wrap gap-2 min-h-[2.4rem]">
         {sorted.length === 0 ? (
           <span className="text-[#bbb] text-[0.88rem] italic py-[0.3rem]">
-            No ingredients yet — add some above.
+            {t('inventory.empty')}
           </span>
         ) : (
           sorted.map(item => (
@@ -90,16 +95,17 @@ export default function InventoryCard({
 
       {/* Instructions */}
       <div className="flex items-center justify-between font-semibold text-[0.95rem] text-[#444] mb-3">
-        Any preferences?
-        <span className="font-normal text-[0.82rem] text-[#aaa]">optional</span>
+        {t('inventory.prefsTitle')}
+        <span className="font-normal text-[0.82rem] text-[#aaa]">{t('inventory.optional')}</span>
       </div>
       <input
         type="text"
         value={instructions}
         onChange={e => onInstructionsChange(e.target.value)}
         onKeyDown={e => e.key === 'Enter' && onSubmit()}
-        placeholder="e.g. quick meals only, cooking for 4, no dairy, something spicy…"
+        placeholder={t('inventory.prefsPlaceholder')}
         autoComplete="off"
+        maxLength={500}
         className="w-full border-[1.5px] border-[#ddd] rounded-lg px-[0.9rem] py-[0.6rem] text-[0.95rem] bg-[#fafafa] focus:outline-none focus:border-brand focus:bg-white transition-colors mb-4"
       />
 
@@ -108,7 +114,7 @@ export default function InventoryCard({
         disabled={inventory.length === 0 || isStreaming}
         className="w-full py-[0.85rem] bg-brand text-white text-[1.05rem] font-semibold rounded-xl hover:bg-brand-dark active:scale-[0.98] disabled:bg-brand-light disabled:cursor-not-allowed transition-all"
       >
-        {isStreaming ? 'Finding recipes…' : 'Find Recipes'}
+        {isStreaming ? t('inventory.finding') : t('inventory.find')}
       </button>
     </div>
   );

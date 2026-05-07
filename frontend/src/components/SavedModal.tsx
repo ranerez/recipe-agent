@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { parseMarkdown } from '../utils/markdown';
 import { printRecipe } from '../utils/print';
 import type { SavedRecipe } from '../types';
+import { useLang } from '../i18n/LangContext';
 
 const PrinterIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -18,6 +19,7 @@ interface SavedModalProps {
 }
 
 export default function SavedModal({ recipes, onClose, onDelete }: SavedModalProps) {
+  const { t } = useLang();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   function toggle(i: number) {
@@ -31,7 +33,7 @@ export default function SavedModal({ recipes, onClose, onDelete }: SavedModalPro
     >
       <div className="bg-white rounded-2xl max-w-[760px] mx-auto p-8">
         <div className="flex justify-between items-center mb-[1.4rem]">
-          <h2 className="text-[1.3rem] text-brand font-bold">📌 Saved Recipes</h2>
+          <h2 className="text-[1.3rem] text-brand font-bold">{t('saved.title')}</h2>
           <button
             onClick={onClose}
             className="bg-transparent border-none text-[1.4rem] cursor-pointer text-[#888] hover:text-[#333] leading-none p-0"
@@ -41,7 +43,7 @@ export default function SavedModal({ recipes, onClose, onDelete }: SavedModalPro
         </div>
 
         {recipes.length === 0 ? (
-          <p className="text-[#bbb] italic text-center py-8">No saved recipes yet.</p>
+          <p className="text-[#bbb] italic text-center py-8">{t('saved.empty')}</p>
         ) : (
           recipes.map((r, i) => (
             <div key={i} className="border-t border-warm-divider py-3">
@@ -54,7 +56,7 @@ export default function SavedModal({ recipes, onClose, onDelete }: SavedModalPro
                 </span>
                 <button
                   onClick={() => printRecipe(r.name, r.markdown)}
-                  title="Print recipe"
+                  title={t('saved.print')}
                   className="p-[0.28rem] border-[1.5px] border-[#ddd] rounded-md text-[#aaa] hover:text-[#555] hover:border-[#999] bg-transparent transition-colors flex items-center leading-none"
                 >
                   <PrinterIcon />
@@ -67,7 +69,7 @@ export default function SavedModal({ recipes, onClose, onDelete }: SavedModalPro
                   }}
                   className="bg-transparent border-[1.5px] border-[#ddd] text-[0.78rem] font-semibold text-[#999] cursor-pointer px-[0.6rem] py-[0.2rem] rounded-md hover:text-brand hover:border-brand transition-colors"
                 >
-                  Remove
+                  {t('saved.remove')}
                 </button>
               </div>
 

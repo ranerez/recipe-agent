@@ -1,6 +1,7 @@
 import { parseMarkdown, parseRecipeSections } from '../utils/markdown';
 import { printRecipe } from '../utils/print';
 import type { SavedRecipe } from '../types';
+import { useLang } from '../i18n/LangContext';
 
 const PrinterIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -18,6 +19,8 @@ interface OutputCardProps {
 }
 
 export default function OutputCard({ rawMarkdown, isStreaming, savedRecipes, onToggleSave }: OutputCardProps) {
+  const { t } = useLang();
+
   if (!rawMarkdown && !isStreaming) return null;
 
   if (isStreaming) {
@@ -44,7 +47,6 @@ export default function OutputCard({ rawMarkdown, isStreaming, savedRecipes, onT
           );
         }
 
-        // Split title from body so we can place buttons alongside the title
         const bodyMarkdown = section.markdown
           .replace(/^\*\*\[?.+?\]?\*\*\n?/, '')
           .trim();
@@ -54,7 +56,6 @@ export default function OutputCard({ rawMarkdown, isStreaming, savedRecipes, onT
         return (
           <div key={i}>
             {i > 0 && <hr className="border-none border-t border-[#eee] my-[1.2rem]" />}
-            {/* Title row with action buttons */}
             <div className="flex justify-between items-center gap-2 mt-[1.2rem] mb-1">
               <p className="font-bold text-[0.97rem] leading-snug flex-1">
                 {section.title}
@@ -62,24 +63,24 @@ export default function OutputCard({ rawMarkdown, isStreaming, savedRecipes, onT
               <div className="flex gap-1 flex-shrink-0">
                 <button
                   onClick={() => printRecipe(section.title, section.markdown)}
-                  title="Print recipe"
+                  title={t('output.print')}
                   className="p-[0.28rem] border-[1.5px] border-[#ddd] rounded-md text-[#aaa] hover:text-[#555] hover:border-[#999] bg-transparent transition-colors flex items-center leading-none"
                 >
                   <PrinterIcon />
                 </button>
                 <button
-                  onClick={() => onToggleSave(section.title, section.markdown)}
+                  onClick={isSaved ? undefined : () => onToggleSave(section.title, section.markdown)}
+                  disabled={isSaved}
                   className={`px-3 py-[0.28rem] text-[0.78rem] font-semibold rounded-md border-[1.5px] transition-colors ${
                     isSaved
-                      ? 'bg-brand border-brand text-white hover:bg-brand-dark'
+                      ? 'bg-brand border-brand text-white cursor-default'
                       : 'bg-transparent border-brand text-brand hover:bg-brand-bg'
                   }`}
                 >
-                  {isSaved ? '✓ Saved' : 'Save'}
+                  {isSaved ? t('output.saved') : t('output.save')}
                 </button>
               </div>
             </div>
-            {/* Recipe body */}
             <div
               className="recipe-prose"
               dangerouslySetInnerHTML={{ __html: parseMarkdown(bodyMarkdown) }}

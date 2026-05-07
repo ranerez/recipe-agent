@@ -6,6 +6,7 @@ import {
   loadPreferences, persistPreferences,
 } from './utils/storage';
 import { extractAiComment } from './utils/markdown';
+import { useLang } from './i18n/LangContext';
 import Header from './components/Header';
 import PreferencesCard from './components/PreferencesCard';
 import InventoryCard from './components/InventoryCard';
@@ -16,6 +17,7 @@ import QuotaOverlay from './components/QuotaOverlay';
 import SetupOverlay from './components/SetupOverlay';
 
 export default function App() {
+  const { dir, englishName, t } = useLang();
   const [inventory, setInventory] = useState<string[]>(loadInventory);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>(loadSavedRecipes);
   const [prefs, setPrefs] = useState<Preferences>(loadPreferences);
@@ -51,8 +53,16 @@ export default function App() {
     persistPreferences(p);
   }
 
+  function sanitizeText(s: string): string {
+    // Strip control characters (except normal whitespace) and trim.
+    return s.replace(/[^\P{C}\t\n\r ]/gu, '').trim();
+  }
+
   function handleAddIngredient(raw: string): string[] {
-    const newItems = raw.split(',').map(s => s.trim()).filter(Boolean);
+    const newItems = raw
+      .split(',')
+      .map(s => sanitizeText(s).slice(0, 100))
+      .filter(Boolean);
     const current = loadInventory();
     const duplicates: string[] = [];
 
@@ -76,9 +86,8 @@ export default function App() {
 
   function handleToggleSave(name: string, markdown: string) {
     const list = loadSavedRecipes();
-    const idx = list.findIndex(r => r.name === name);
-    if (idx >= 0) list.splice(idx, 1);
-    else list.push({ name, markdown, savedAt: new Date().toISOString() });
+    if (list.some(r => r.name === name)) return;
+    list.push({ name, markdown, savedAt: new Date().toISOString() });
     persistSavedRecipes(list);
     setSavedRecipes([...list]);
   }
@@ -130,7 +139,7 @@ export default function App() {
               const payload = JSON.parse(chunk.slice(7, -1)) as QuotaPayload;
               setQuotaPayload(payload);
             } catch {
-              onStatus('API error — check your key or try again.');
+              onStatus(t('app.apiError'));
             }
             return;
           }
@@ -151,7 +160,7 @@ export default function App() {
         }
       }
     } catch (err) {
-      onStatus(`Error: ${(err as Error).message}`);
+      onStatus(`${t('app.error')}${(err as Error).message}`);
     } finally {
       setIsStreaming(false);
     }
@@ -159,7 +168,7 @@ export default function App() {
 
   async function handleSubmit() {
     if (!inventory.length) {
-      setStreamStatus('Add some ingredients to your pantry first.');
+      setStreamStatus(t('app.addIngredients'));
       return;
     }
 
@@ -168,10 +177,10 @@ export default function App() {
     if (dietary) prefParts.push(dietary);
     if (instructions.trim()) prefParts.push(instructions.trim());
 
-    const userMessage = `I have: ${inventory.join(', ')}\n\nPreferences: ${prefParts.join(', ')}\n\nWhat dinners can I make tonight?`;
+    const userMessage = `I have: ${inventory.join(', ')}\n\nPreferences: ${prefParts.join(', ')}\n\nWhat dinners can I make tonight?\n\nPlease respond entirely in ${englishName}.`;
     const newHistory: Message[] = [{ role: 'user', content: userMessage }];
     setHistory(newHistory);
-    setStreamStatus('Finding recipes…');
+    setStreamStatus(t('inventory.finding'));
 
     await streamFromHistory(newHistory, setStreamStatus);
   }
@@ -193,7 +202,7 @@ export default function App() {
   }
 
   return (
-    <div className="bg-warm-bg min-h-screen flex flex-col items-center px-4 py-8 pb-16">
+    <div dir={dir} className="bg-warm-bg min-h-screen flex flex-col items-center px-4 py-8 pb-16">
       <Header savedCount={savedRecipes.length} onSavedClick={() => setShowSavedModal(true)} />
 
       <PreferencesCard
@@ -253,7 +262,7 @@ export default function App() {
       )}
 
       <footer className="mt-auto pt-6 text-center text-[#aaa] text-xs">
-        &copy; 2026 Ran Erez
+        {t('footer.copyright')}
       </footer>
     </div>
   );
