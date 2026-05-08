@@ -3,11 +3,15 @@ import { useLang } from '../i18n/LangContext';
 
 interface InventoryCardProps {
   inventory: string[];
+  selectedIngredients: string[];
   instructions: string;
   isStreaming: boolean;
   hasResults: boolean;
   onAdd: (raw: string) => string[];
   onRemove: (name: string) => void;
+  onSelect: (name: string) => void;
+  onDeselect: (name: string) => void;
+  onClearSelected: () => void;
   onInstructionsChange: (v: string) => void;
   onSubmit: () => void;
   onClear: () => void;
@@ -15,11 +19,15 @@ interface InventoryCardProps {
 
 export default function InventoryCard({
   inventory,
+  selectedIngredients,
   instructions,
   isStreaming,
   hasResults,
   onAdd,
   onRemove,
+  onSelect,
+  onDeselect,
+  onClearSelected,
   onInstructionsChange,
   onSubmit,
   onClear,
@@ -43,6 +51,7 @@ export default function InventoryCard({
   }
 
   const sorted = [...inventory].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  const selectedSet = new Set(selectedIngredients);
   const itemCount = inventory.length;
   const itemWord = itemCount === 1 ? t('inventory.item') : t('inventory.items');
 
@@ -76,7 +85,7 @@ export default function InventoryCard({
         </button>
       </div>
 
-      {/* Chips */}
+      {/* Pantry chips */}
       <div className="flex flex-wrap gap-2 min-h-[2.4rem]">
         {sorted.length === 0 ? (
           <span className="text-[#bbb] text-[0.88rem] italic py-[0.3rem]">
@@ -84,15 +93,40 @@ export default function InventoryCard({
           </span>
         ) : (
           sorted.map(item => (
-            <Chip
+            <PantryChip
               key={item}
               name={item}
+              isSelected={selectedSet.has(item)}
               isPulsing={pulsingChips.has(item)}
               onPulseEnd={() => setPulsingChips(prev => { const s = new Set(prev); s.delete(item); return s; })}
               onRemove={() => onRemove(item)}
+              onSelect={() => onSelect(item)}
             />
           ))
         )}
+      </div>
+
+      {/* Use-only section */}
+      <div className="mt-[1.2rem]">
+        <div className="flex items-center justify-between mb-[0.3rem]">
+          <span className="font-semibold text-[0.95rem] text-[#444]">
+            {t('inventory.useOnly')}
+          </span>
+          {selectedIngredients.length > 0 && (
+            <button
+              onClick={onClearSelected}
+              className="text-[0.8rem] text-[#aaa] hover:text-brand transition-colors bg-transparent border-none cursor-pointer p-0"
+            >
+              {t('inventory.clearAll')}
+            </button>
+          )}
+        </div>
+        <p className="text-[0.82rem] text-[#bbb] mb-2">{t('inventory.useOnlyHint')}</p>
+        <div className="flex flex-wrap gap-2 min-h-[2rem]">
+          {selectedIngredients.map(item => (
+            <SelectedChip key={item} name={item} onDeselect={() => onDeselect(item)} />
+          ))}
+        </div>
       </div>
 
       <hr className="border-none border-t border-warm-divider my-[1.4rem]" />
@@ -134,30 +168,58 @@ export default function InventoryCard({
   );
 }
 
-function Chip({
+function PantryChip({
   name,
+  isSelected,
   isPulsing,
   onPulseEnd,
   onRemove,
+  onSelect,
 }: {
   name: string;
+  isSelected: boolean;
   isPulsing: boolean;
   onPulseEnd: () => void;
   onRemove: () => void;
+  onSelect: () => void;
 }) {
   return (
     <span
       onAnimationEnd={onPulseEnd}
-      className={`inline-flex items-center gap-[0.35rem] bg-brand-bg border border-brand-border rounded-full px-[0.75rem] py-[0.3rem] text-[0.88rem] text-[#7b2c24] hover:bg-[#f9ddd9] transition-colors ${isPulsing ? 'animate-pulse-chip' : ''}`}
+      className={`inline-flex items-center gap-[0.3rem] bg-brand-bg border border-brand-border rounded-full px-[0.75rem] py-[0.3rem] text-[0.88rem] text-[#7b2c24] transition-colors ${isPulsing ? 'animate-pulse-chip' : 'hover:bg-[#f9ddd9]'}`}
     >
+      {!isSelected && (
+        <button
+          onClick={onSelect}
+          title="+"
+          className="bg-transparent border-none cursor-pointer p-0 m-0 text-brand leading-none opacity-50 hover:opacity-100 flex items-center transition-opacity font-bold text-[0.95rem]"
+        >
+          +
+        </button>
+      )}
       {name}
       <button
         onClick={onRemove}
         title="Remove"
-        className="bg-transparent border-none cursor-pointer p-0 m-0 text-brand text-base leading-none opacity-60 hover:opacity-100 flex items-center transition-opacity"
+        className="bg-transparent border-none cursor-pointer p-0 m-0 text-brand text-base leading-none opacity-40 hover:opacity-100 flex items-center transition-opacity"
       >
         ✕
       </button>
+    </span>
+  );
+}
+
+function SelectedChip({ name, onDeselect }: { name: string; onDeselect: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-[0.3rem] bg-brand border border-brand rounded-full px-[0.75rem] py-[0.3rem] text-[0.88rem] text-white">
+      <button
+        onClick={onDeselect}
+        title="−"
+        className="bg-transparent border-none cursor-pointer p-0 m-0 text-white leading-none opacity-70 hover:opacity-100 flex items-center transition-opacity font-bold text-[1rem]"
+      >
+        −
+      </button>
+      {name}
     </span>
   );
 }

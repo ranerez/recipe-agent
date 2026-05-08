@@ -44,6 +44,9 @@ const en: Strings = {
   'inventory.find': 'Find Recipes',
   'inventory.finding': 'Finding recipes…',
   'inventory.clear': 'Clear',
+  'inventory.useOnly': 'Use only these ingredients',
+  'inventory.useOnlyHint': 'Leave empty to use all ingredients',
+  'inventory.clearAll': 'Clear All',
   'inventory.optional': 'optional',
 
   'output.save': 'Save',
@@ -139,6 +142,9 @@ const es: Strings = {
   'inventory.find': 'Buscar recetas',
   'inventory.finding': 'Buscando recetas…',
   'inventory.clear': 'Limpiar',
+  'inventory.useOnly': 'Usar solo estos ingredientes',
+  'inventory.useOnlyHint': 'Dejar vacío para usar todos los ingredientes',
+  'inventory.clearAll': 'Borrar todo',
   'inventory.optional': 'opcional',
 
   'output.save': 'Guardar',
@@ -234,6 +240,9 @@ const fr: Strings = {
   'inventory.find': 'Trouver des recettes',
   'inventory.finding': 'Recherche en cours…',
   'inventory.clear': 'Effacer',
+  'inventory.useOnly': 'Utiliser uniquement ces ingrédients',
+  'inventory.useOnlyHint': 'Laisser vide pour utiliser tous les ingrédients',
+  'inventory.clearAll': 'Tout effacer',
   'inventory.optional': 'facultatif',
 
   'output.save': 'Sauvegarder',
@@ -329,6 +338,9 @@ const de: Strings = {
   'inventory.find': 'Rezepte finden',
   'inventory.finding': 'Suche läuft…',
   'inventory.clear': 'Löschen',
+  'inventory.useOnly': 'Nur diese Zutaten verwenden',
+  'inventory.useOnlyHint': 'Leer lassen, um alle Zutaten zu verwenden',
+  'inventory.clearAll': 'Alle löschen',
   'inventory.optional': 'optional',
 
   'output.save': 'Speichern',
@@ -424,6 +436,9 @@ const he: Strings = {
   'inventory.find': 'מצא מתכונים',
   'inventory.finding': 'מחפש מתכונים…',
   'inventory.clear': 'נקה',
+  'inventory.useOnly': 'השתמש רק במצרכים אלה',
+  'inventory.useOnlyHint': 'השאר ריק כדי להשתמש בכל המצרכים',
+  'inventory.clearAll': 'נקה הכל',
   'inventory.optional': 'אופציונלי',
 
   'output.save': 'שמור',
@@ -519,6 +534,9 @@ const ar: Strings = {
   'inventory.find': 'ابحث عن وصفات',
   'inventory.finding': 'جاري البحث عن وصفات…',
   'inventory.clear': 'مسح',
+  'inventory.useOnly': 'استخدم هذه المكونات فقط',
+  'inventory.useOnlyHint': 'اتركه فارغاً لاستخدام جميع المكونات',
+  'inventory.clearAll': 'مسح الكل',
   'inventory.optional': 'اختياري',
 
   'output.save': 'احفظ',

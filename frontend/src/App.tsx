@@ -20,6 +20,7 @@ import SetupOverlay from './components/SetupOverlay';
 export default function App() {
   const { dir, englishName, t } = useLang();
   const [inventory, setInventory] = useState<string[]>(loadInventory);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>(loadSavedRecipes);
   const [prefs, setPrefs] = useState<Preferences>(loadPreferences);
   const [prefsOpen, setPrefsOpen] = useState(false);
@@ -94,6 +95,15 @@ export default function App() {
     const updated = inventory.filter(i => i !== name);
     saveInventory(updated);
     setInventory(updated);
+    setSelectedIngredients(prev => prev.filter(i => i !== name));
+  }
+
+  function handleSelectIngredient(name: string) {
+    setSelectedIngredients(prev => prev.includes(name) ? prev : [...prev, name]);
+  }
+
+  function handleDeselectIngredient(name: string) {
+    setSelectedIngredients(prev => prev.filter(i => i !== name));
   }
 
   function handleToggleSave(name: string, markdown: string) {
@@ -189,7 +199,8 @@ export default function App() {
     if (dietary) prefParts.push(dietary);
     if (instructions.trim()) prefParts.push(instructions.trim());
 
-    const userMessage = `I have: ${inventory.join(', ')}\n\nPreferences: ${prefParts.join(', ')}\n\nWhat dinners can I make tonight?\n\nPlease respond entirely in ${englishName}.`;
+    const ingredientsToUse = selectedIngredients.length > 0 ? selectedIngredients : inventory;
+    const userMessage = `I have: ${ingredientsToUse.join(', ')}\n\nPreferences: ${prefParts.join(', ')}\n\nWhat dinners can I make tonight?\n\nPlease respond entirely in ${englishName}.`;
     const newHistory: Message[] = [{ role: 'user', content: userMessage }];
     setHistory(newHistory);
     setStreamStatus(t('inventory.finding'));
@@ -226,11 +237,15 @@ export default function App() {
 
       <InventoryCard
         inventory={inventory}
+        selectedIngredients={selectedIngredients}
         instructions={instructions}
         isStreaming={isStreaming}
         hasResults={!!rawMarkdown}
         onAdd={handleAddIngredient}
         onRemove={handleRemoveIngredient}
+        onSelect={handleSelectIngredient}
+        onDeselect={handleDeselectIngredient}
+        onClearSelected={() => setSelectedIngredients([])}
         onInstructionsChange={setInstructions}
         onSubmit={handleSubmit}
         onClear={handleClear}
